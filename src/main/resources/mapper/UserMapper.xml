@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.mapper.IUserMapper">
+
+    <resultMap id="UserResult" type="User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id,name,password
+    </sql>
+
+    <select id="findFirst" resultType="User" resultMap="UserResult" parameterType="String">
+        SELECT
+         <include refid="Base_Column_List"/>
+         FROM user
+        WHERE 1=1
+        <if test="par[0]!=null and par[0].name!=null">
+            and name = #{par[0].name}
+        </if>
+        <if test="par[0]!=null and par[0].password!=null">
+            and password = #{par[0].password}
+        </if>
+        <if test="par[0]!=null and par[0].id!=null">
+            and id = #{par[0].id}
+        </if>
+    </select>
+
+    <insert id="add" parameterType="User">
+        INSERT INTO user (id,name,password)
+        VALUES (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="update" parameterType="String">
+        UPDATE user
+        <set>
+            <if test="id!=null">
+                id = #{id,jdbcType = VARCHAR},
+            </if>
+            <if test="name!=null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="password!=null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType = VARCHAR}
+    </insert>
+
+    <insert id="del" parameterType="String">
+        DELETE FROM user
+        WHERE id = #{id}
+    </insert>
+
+    <select id="findAll" parameterType="User" resultMap="UserResult" resultType="User">
+        select
+         <include refid="Base_Column_List"></include>
+         from user
+        WHERE 1=1
+        <if test="par[0]!=null and par[0].name != null">
+            and name like '%${par[0].name}%'
+        </if>
+    </select>
+</mapper>
+
+
